@@ -29,7 +29,7 @@
       </div>
       <div class="row">
         <div class="input-field col s12">
-          <input type="tel" class="userForm__tel" placeholder="Номер телефона" id="userForm__tel" value="+7932112339">
+          <input type="tel" class="userForm__tel" placeholder="+XXXXXXXXXXX" id="userForm__tel" value="+7932112339">
           <label for="userForm__theme">Номер телефона</label>
         </div>
       </div>
@@ -66,6 +66,13 @@
       return formData.join("&");
     }
 
+    const fieldFalidation = ({ email, tel }) => {
+      const emailTest = /^\S+@\S+\.\S+$/.test(email), telTest = /^[\+][(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{5}$/.test(tel);
+      if (!emailTest) return { status: 0, error: 'Некорректный email' };
+      if (!telTest) return { status: 0, error: 'Некорректный номер телефона' };
+      return { status: 1 };
+    }
+
     userForm.addEventListener('submit', async event => {
       try {
         event.preventDefault()
@@ -76,6 +83,8 @@
           "extra_email": document.getElementById("userForm__email").value,
           "extra_tel": document.getElementById("userForm__tel").value
         }
+        const dataValidation = fieldFalidation({ email: data.extra_email, tel: data.extra_tel })
+        if (!dataValidation.status) throw Error(dataValidation.error)
         const userData = getParams(data);
 
         const response = await fetch('https://postmail.invotes.com/send', {
