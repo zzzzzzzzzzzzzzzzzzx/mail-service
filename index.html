@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mail service</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</head>
+
+<body>
+  <div class="row" style="display: flex">
+    <form class="col s3 userForm" style="margin: 20px auto">
+      <div class="row">
+        <div class="input-field col s12">
+          <input type="text" class="userForm__theme" placeholder="Какой у вас вопрос?" id="userForm__theme"
+            value="Хочу получить ваш продукт">
+          <label for="userForm__theme">Тема сообщения</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12">
+          <input type="email" class="userForm__email" placeholder="Email" id="userForm__email"
+            value="userEmail@mail.com">
+          <label for="userForm__theme">Email</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12">
+          <input type="tel" class="userForm__tel" placeholder="Номер телефона" id="userForm__tel" value="+7932112339">
+          <label for="userForm__theme">Номер телефона</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12">
+          <!-- <input id="email" type="email" class="validate"> -->
+          <textarea class="materialize-textarea userForm__addition" id="userForm__addition"
+            placeholder="Дополнительная информация">Не нужно мне перезванивать, оправьте всю информацию мне на почту</textarea>
+          <label for="userForm__addition">Дополнительная информация</label>
+        </div>
+      </div>
+      <button class="btn waves-effect waves-light" type="submit">Отправить запрос
+      </button>
+    </form>
+  </div>
+  <script>
+    M.updateTextFields()
+
+    const userForm = document.querySelector('.userForm')
+
+    const successRequest = () => {
+      alert('Запрос успешно отправлен')
+    }
+
+    const errorRequest = error => {
+      alert(error)
+    }
+
+    const getParams = data => {
+      const formData = [];
+      for (const key in data) {
+        formData.push(encodeURIComponent(key) + "=" + encodeURIComponent(data[key]));
+      }
+      return formData.join("&");
+    }
+
+    userForm.addEventListener('submit', async event => {
+      try {
+        event.preventDefault()
+        const data = {
+          "access_token": "3q0qa9t0cvjq29cre2v10ze6",
+          "subject": document.getElementById("userForm__theme").value,
+          "text": document.getElementById("userForm__addition").value,
+          "extra_email": document.getElementById("userForm__email").value,
+          "extra_tel": document.getElementById("userForm__tel").value
+        }
+        const userData = getParams(data);
+
+        const response = await fetch('https://postmail.invotes.com/send', {
+          method: "POST", mode: 'cors', headers: {
+            "Content-type": "application/x-www-form-urlencoded"
+          }, body: userData
+        })
+        successRequest()
+      } catch (error) {
+        errorRequest(error)
+      }
+    })
+  </script>
+
+</body>
+
+</html>
